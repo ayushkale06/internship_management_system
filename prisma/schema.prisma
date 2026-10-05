@@ -1,0 +1,108 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  passwordHash  String
+  role          String    // 'admin', 'faculty', 'student'
+  isVerified    Boolean   @default(false)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  studentProfile Student?
+  facultyProfile Faculty?
+}
+
+model Student {
+  userId       Int       @id
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  phone        String?
+  department   String
+  gpa          Float?
+  resumeUrl    String?
+
+  applications Application[]
+}
+
+model Faculty {
+  userId       Int       @id
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  department   String
+  phone        String?
+
+  postedInternships Internship[]
+}
+
+model Company {
+  id                 Int      @id @default(autoincrement())
+  name               String
+  registrationNumber String   @unique
+  location           String
+  contactPerson      String
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  internships Internship[]
+}
+
+model Internship {
+  id                 Int      @id @default(autoincrement())
+  companyId          Int
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  facultyId          Int?
+  faculty            Faculty? @relation(fields: [facultyId], references: [userId])
+  
+  title              String
+  description        String
+  domain             String
+  locationType       String   @default("Remote") // Remote, Hybrid, On-site
+  durationWeeks      Int
+  stipend            String?  // e.g., "$4,500/mo"
+  tags               String   @default("[]")     // Stored as JSON string
+  startDate          DateTime
+  endDate            DateTime
+  applicationDeadline DateTime
+  status             String   @default("active") // active, closed, archived
+  createdAt          DateTime @default(now())
+
+  applications Application[]
+}
+
+model Application {
+  id             Int      @id @default(autoincrement())
+  studentId      Int
+  student        Student  @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  internshipId   Int
+  internship     Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  resumeUrl      String
+  coverLetter    String?
+  qualifications String?
+  status         String   @default("Pending") // Pending, Shortlisted, Rejected, Accepted
+  appliedAt      DateTime @default(now())
+
+  interviews Interview[]
+
+  @@unique([studentId, internshipId])
+}
+
+model Interview {
+  id                 Int      @id @default(autoincrement())
+  applicationId      Int
+  application        Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scheduledAt        DateTime
+  interviewerDetails String
+  results            String?
+  feedback           String?
+  status             String   @default("Scheduled")
+  createdAt          DateTime @default(now())
+}
