@@ -1,19 +1,6 @@
 "use client";
 import { AlertTriangle, Download, XCircle, CheckCircle, Bug, Lightbulb, MessageSquare } from "lucide-react";
 import { useState } from "react";
-"use client";
-import { AlertTriangle, Download, XCircle, CheckCircle, Bug, Lightbulb, MessageSquare } from "lucide-react";
-import { useState } from "react";
-"use client";
-import { AlertTriangle, Download, XCircle, CheckCircle, Bug, Lightbulb, MessageSquare } from "lucide-react";
-import { useState } from "react";
-"use client";
-import { AlertTriangle, Download, XCircle, CheckCircle, Bug, Lightbulb, MessageSquare } from "lucide-react";
-import { useState } from "react";
-"use client";
-import { AlertTriangle, Download, XCircle, CheckCircle, Bug, Lightbulb, MessageSquare } from "lucide-react";
-import { useState } from "react";
-
 
 export default function AdminDashboard() {
   const [pendingInternships, setPendingInternships] = useState([
